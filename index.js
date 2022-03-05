@@ -1,7 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
+import wordleRoutes from "./routes/wordleRoutes";
 
-const PORT = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8081;
+const PORT = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
 
 const app = express();
 
@@ -15,6 +16,10 @@ app.use(express.static("public"));
 app.get("/test", (req, res) => {
   res.send("test route!");
 });
+
+// app.use("/docs", swaggerUi.serve);
+
+wordleRoutes(app);
 
 app.get("/", (req, res) => {
   console.log(`hi on port ${PORT}`);
