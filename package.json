@@ -1,0 +1,36 @@
+{
+  "name": "thewordleis-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./index.js --exec babel-node -e js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schmitty890/thewordleis-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/schmitty890/thewordleis-api/issues"
+  },
+  "homepage": "https://github.com/schmitty890/thewordleis-api#readme",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "body-parser": "^1.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "luxon": "^2.3.1",
+    "mongodb": "^4.4.1",
+    "mongoose": "^6.2.4",
+    "node-cron": "^3.0.0",
+    "nodemon": "^2.0.15",
+    "puppeteer": "^13.4.1"
+  }
+}
