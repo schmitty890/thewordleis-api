@@ -18,6 +18,7 @@ async function findOne() {
         res.send(err);
       }
 
+      console.log(latestWord);
       if (latestWord.length !== 0) {
         console.log("original wordle: " + latestWord[1].word);
         originalWordle = latestWord[1].word;
@@ -31,7 +32,7 @@ async function findOne() {
       if (err) {
         res.send(err);
       }
-
+      console.log(latestWord);
       if (latestWord.length !== 0) {
         console.log("new wordle: " + latestWord[0].word);
         newWordle = latestWord[0].word;
@@ -667,10 +668,11 @@ export const updateDBTimeZones = async (req, res) => {
   allTheTimeZones.forEach((timeZone) => {
     let currentDay;
     let strTime = luxon.DateTime.local().setZone(timeZone);
-    // console.log(strTime);
+    console.log(strTime.day);
     // console.log(strTime.day + " " + strTime.hour);
     // console.log(timeZone, strTime.hour);
 
+    console.log(strTime.day === originalDay);
     // if strTime.hour is 0, that means its midnight. update their values in the database to the new value to send to the user. else, do nothing.
     if (strTime.day === originalDay) {
       console.log(
