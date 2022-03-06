@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import wordleRoutes from "./routes/wordleRoutes";
 import mongoose from "mongoose";
+import http from "http";
 
 const PORT = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
 
@@ -33,6 +34,10 @@ wordleRoutes(app);
 app.get("/", (req, res) => {
   console.log(`hi on port ${PORT}`);
 });
+
+setInterval(function () {
+  http.get("https://thewordleis-api.herokuapp.com/api/v1/test");
+}, 300000); // every 5 minutes (300000)
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

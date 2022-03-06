@@ -692,7 +692,7 @@ export const wordleCronJob = async (req, res) => {
   console.log(
     "tarawa time: " + luxon.DateTime.local().setZone("Pacific/Tarawa").hour
   );
-  console.log("hawaii time: " + luxon.DateTime.local().hour);
+  console.log("hawaii time: " + luxon.DateTime.local().hour); // TODO: this is different in heroku. it is getting a different time. need to specify hawaii. if it even matters
   // cronjob that runs ever hour on the hour
   cron.schedule("0 * * * *", () => {
     console.log("starting cron job...");
