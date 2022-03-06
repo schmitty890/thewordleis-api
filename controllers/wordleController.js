@@ -1,8 +1,45 @@
 import puppeteer from "puppeteer";
 import luxon from "luxon";
 import cron from "node-cron";
+import chalk from "chalk";
+import mongoose from "mongoose";
 
-let newWordle = "house"; // set to last known value in database (maybe hawaii word?)
+import { WordSchema } from "../models/wordModel";
+const CurrentWord = mongoose.model("CurrentWord", WordSchema);
+
+let originalWordle = "";
+let newWordle = "";
+async function findOne() {
+  try {
+    CurrentWord.find({}, (err, latestWord) => {
+      if (err) {
+        res.send(err);
+      }
+
+      console.log("original wordle: " + latestWord[1].word);
+      originalWordle = latestWord[1].word;
+    })
+      .sort({ $natural: -1 })
+      .limit(2); // set to last known value in database (maybe hawaii word?)
+
+    CurrentWord.find({}, (err, latestWord) => {
+      if (err) {
+        res.send(err);
+      }
+
+      console.log("new wordle: " + latestWord[0].word);
+      newWordle = latestWord[0].word;
+    })
+      .sort({ $natural: -1 })
+      .limit(1); // set to last known value in database (maybe hawaii word?)
+  } catch (err) {
+    console.log(err);
+  } finally {
+    // client.close();
+  }
+}
+
+await findOne();
 
 export const getTheWordle = async (req, res) => {
   console.log("getTheWordle");
@@ -233,7 +270,20 @@ export const getTheWordle = async (req, res) => {
         console.log(answer._remoteObject.value.length);
         newWordle = answer._remoteObject.value;
 
-        updateDBTimeZones(newWordle);
+        // updateDBTimeZones(newWordle);
+        // mongo here
+        const newCurrentWord = new CurrentWord({ word: newWordle });
+        console.log(newCurrentWord);
+        // console.log("saving if users can edit");
+        newCurrentWord.save((err, theCurrentWord) => {
+          if (err) {
+            return res.status(400).send({ message: err });
+          } else {
+            console.log("new word saved");
+            return res.json(theCurrentWord);
+          }
+        });
+        // mongo here
         // res.send("New wordle obtained: " + newWordle);
         console.log("New wordle obtained: " + newWordle);
       }
@@ -599,13 +649,35 @@ export const updateDBTimeZones = async (req, res) => {
     "Pacific/Apia",
     "Africa/Johannesburg",
   ];
-
+  let currentDay;
   allTheTimeZones.forEach((timeZone) => {
     let strTime = luxon.DateTime.local().setZone(timeZone);
+    // console.log(strTime.day + " " + strTime.hour);
     // console.log(timeZone, strTime.hour);
+
     // if strTime.hour is 0, that means its midnight. update their values in the database to the new value to send to the user. else, do nothing.
     if (strTime.hour == 0) {
-      console.log(`${timeZone} needs to be updated with ${newWordle}`);
+      // save to the database, and add it to the users localstorage
+      currentDay = strTime.day;
+      console.log(
+        chalk.green(
+          `${timeZone} NEEDS FIRST WORDLE ${newWordle} : hour:${strTime.hour} day:${strTime.day}`
+        )
+      );
+    } else if (strTime.day === currentDay) {
+      // add it to the users localstorage
+      console.log(
+        chalk.yellow(
+          `${timeZone} NEEDS FIRST WORDLE ${newWordle}: hour:${strTime.hour} day:${strTime.day}`
+        )
+      );
+    } else {
+      // add it to the users localstorage
+      console.log(
+        chalk.red(
+          `${timeZone} NEEDS SECOND WORDLE ${originalWordle}: hour:${strTime.hour} day:${strTime.day}`
+        )
+      );
     }
   });
   // res.send("Timezones have updated");
