@@ -8,7 +8,9 @@ import { WordSchema } from "../models/wordModel";
 const CurrentWord = mongoose.model("CurrentWord", WordSchema);
 
 let originalWordle = "";
+let originalDay = 0;
 let newWordle = "";
+
 async function findOne() {
   try {
     CurrentWord.find({}, (err, latestWord) => {
@@ -19,6 +21,7 @@ async function findOne() {
       if (latestWord.length !== 0) {
         console.log("original wordle: " + latestWord[1].word);
         originalWordle = latestWord[1].word;
+        originalDay = latestWord[1].day;
       }
     })
       .sort({ $natural: -1 })
@@ -52,7 +55,7 @@ export const getTheWordle = async (req, res) => {
     args: ["--no-sandbox"],
   });
   const page = await browser.newPage();
-  await page.emulateTimezone("Pacific/Kiritimati"); // the furthest east time zone I found
+  await page.emulateTimezone("Pacific/Apia"); // the furthest east time zone I found
 
   await page.goto("https://www.nytimes.com/games/wordle/index.html");
   await page.waitForTimeout(3000);
@@ -276,7 +279,12 @@ export const getTheWordle = async (req, res) => {
 
         // updateDBTimeZones(newWordle);
         // mongo here
-        const newCurrentWord = new CurrentWord({ word: newWordle });
+        const firstTimeDay = luxon.DateTime.local().setZone("Pacific/Apia").day;
+
+        const newCurrentWord = new CurrentWord({
+          word: newWordle,
+          day: firstTimeDay,
+        });
         console.log(newCurrentWord);
         // console.log("saving if users can edit");
         newCurrentWord.save((err, theCurrentWord) => {
@@ -664,33 +672,57 @@ export const updateDBTimeZones = async (req, res) => {
     // console.log(timeZone, strTime.hour);
 
     // if strTime.hour is 0, that means its midnight. update their values in the database to the new value to send to the user. else, do nothing.
-    if (strTime.hour == 0) {
-      // save to the database, and add it to the users localstorage
-      currentDay = strTime.day;
-      console.log(
-        chalk.green(
-          `${timeZone} NEEDS FIRST WORDLE ${newWordle} : hour:${strTime.hour} day:${strTime.day}`
-        )
-      );
-      dataArray.push({ timeZone: timeZone, word: newWordle });
-    } else if (strTime.day === currentDay) {
-      // add it to the users localstorage
-      // console.log(strTime.day + ": " + currentDay);
-      console.log(
-        chalk.yellow(
-          `${timeZone} NEEDS FIRST WORDLE ${newWordle}: hour:${strTime.hour} day:${strTime.day}`
-        )
-      );
-      dataArray.push({ timeZone: timeZone, word: newWordle });
-    } else {
-      // add it to the users localstorage
+    if (strTime.day === originalDay) {
       console.log(
         chalk.red(
           `${timeZone} NEEDS SECOND WORDLE ${originalWordle}: hour:${strTime.hour} day:${strTime.day}`
         )
       );
-      dataArray.push({ timeZone: timeZone, word: originalWordle });
+      dataArray.push({
+        timeZone: timeZone,
+        word: originalWordle,
+        day: strTime.day,
+      });
+    } else {
+      console.log(
+        chalk.green(
+          `${timeZone} NEEDS FIRST WORDLE ${newWordle} : hour:${strTime.hour} day:${strTime.day}`
+        )
+      );
+      dataArray.push({
+        timeZone: timeZone,
+        word: newWordle,
+        day: strTime.day,
+      });
     }
+
+    // if (strTime.hour == 0) {
+    //   // save to the database, and add it to the users localstorage
+    //   currentDay = strTime.day;
+    //   console.log(
+    //     chalk.green(
+    //       `${timeZone} NEEDS FIRST WORDLE ${newWordle} : hour:${strTime.hour} day:${strTime.day}`
+    //     )
+    //   );
+    //   dataArray.push({ timeZone: timeZone, word: newWordle });
+    // } else if (strTime.day === currentDay) {
+    //   // add it to the users localstorage
+    //   console.log(strTime.day + ": " + currentDay);
+    //   console.log(
+    //     chalk.yellow(
+    //       `${timeZone} NEEDS FIRST WORDLE ${newWordle}: hour:${strTime.hour} day:${strTime.day}`
+    //     )
+    //   );
+    //   dataArray.push({ timeZone: timeZone, word: newWordle });
+    // } else {
+    //   // add it to the users localstorage
+    //   console.log(
+    //     chalk.red(
+    //       `${timeZone} NEEDS SECOND WORDLE ${originalWordle}: hour:${strTime.hour} day:${strTime.day}`
+    //     )
+    //   );
+    //   dataArray.push({ timeZone: timeZone, word: originalWordle });
+    // }
   });
 
   console.log("Timezones have updated");
@@ -699,15 +731,13 @@ export const updateDBTimeZones = async (req, res) => {
 
 export const wordleCronJob = async (req, res) => {
   console.log(
-    "Kiritimati time: " +
-      luxon.DateTime.local().setZone("Pacific/Kiritimati").hour
+    "Pacific/Apia time: " + luxon.DateTime.local().setZone("Pacific/Apia").hour
   );
   console.log("hawaii time: " + luxon.DateTime.local().hour); // TODO: this is different in heroku. it is getting a different time. need to specify hawaii. if it even matters
   // cronjob that runs ever hour on the hour
   cron.schedule("0 * * * *", () => {
     console.log("starting cron job...");
-    const firstTimeZone =
-      luxon.DateTime.local().setZone("Pacific/Kiritimati").hour;
+    const firstTimeZone = luxon.DateTime.local().setZone("Pacific/Apia").hour;
 
     if (firstTimeZone === 1) {
       console.log("calling getWordleWord()...");
