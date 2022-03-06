@@ -694,7 +694,7 @@ export const wordleCronJob = async (req, res) => {
   );
   console.log("hawaii time: " + luxon.DateTime.local().hour);
   // cronjob that runs ever hour on the hour
-  cron.schedule("6 * * * *", () => {
+  cron.schedule("0 * * * *", () => {
     console.log("starting cron job...");
     const firstTimeZone = luxon.DateTime.local().setZone("Pacific/Tarawa").hour;
 
