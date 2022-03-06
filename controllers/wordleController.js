@@ -234,7 +234,8 @@ export const getTheWordle = async (req, res) => {
         newWordle = answer._remoteObject.value;
 
         updateDBTimeZones(newWordle);
-        res.send("New wordle obtained: " + newWordle);
+        // res.send("New wordle obtained: " + newWordle);
+        console.log("New wordle obtained: " + newWordle);
       }
     }
   }
@@ -607,7 +608,8 @@ export const updateDBTimeZones = async (req, res) => {
       console.log(`${timeZone} needs to be updated with ${newWordle}`);
     }
   });
-  res.send("Timezones have updated");
+  // res.send("Timezones have updated");
+  console.log("Timezones have updated");
 };
 
 export const wordleCronJob = async (req, res) => {
@@ -616,7 +618,7 @@ export const wordleCronJob = async (req, res) => {
   );
   console.log("hawaii time: " + luxon.DateTime.local().hour);
   // cronjob that runs ever hour on the hour
-  cron.schedule("0 * * * *", () => {
+  cron.schedule("6 * * * *", () => {
     console.log("starting cron job...");
     const firstTimeZone = luxon.DateTime.local().setZone("Pacific/Tarawa").hour;
 
@@ -628,7 +630,8 @@ export const wordleCronJob = async (req, res) => {
       updateDBTimeZones(newWordle); // passes the new word to the timezones needed to be updated
     }
   });
-  res.send("Cron job has started");
+  // res.send("Cron job has started");
+  console.log("Cron job has started");
 };
 
 export const test = async (req, res) => {
