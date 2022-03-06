@@ -16,8 +16,10 @@ async function findOne() {
         res.send(err);
       }
 
-      console.log("original wordle: " + latestWord[1].word);
-      originalWordle = latestWord[1].word;
+      if (latestWord.length !== 0) {
+        console.log("original wordle: " + latestWord[1].word);
+        originalWordle = latestWord[1].word;
+      }
     })
       .sort({ $natural: -1 })
       .limit(2); // set to last known value in database (maybe hawaii word?)
@@ -27,8 +29,10 @@ async function findOne() {
         res.send(err);
       }
 
-      console.log("new wordle: " + latestWord[0].word);
-      newWordle = latestWord[0].word;
+      if (latestWord.length !== 0) {
+        console.log("new wordle: " + latestWord[0].word);
+        newWordle = latestWord[0].word;
+      }
     })
       .sort({ $natural: -1 })
       .limit(1); // set to last known value in database (maybe hawaii word?)
