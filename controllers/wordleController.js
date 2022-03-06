@@ -653,9 +653,11 @@ export const updateDBTimeZones = async (req, res) => {
     "Pacific/Apia",
     "Africa/Johannesburg",
   ];
-  let currentDay;
+
   allTheTimeZones.forEach((timeZone) => {
+    let currentDay;
     let strTime = luxon.DateTime.local().setZone(timeZone);
+    // console.log(strTime);
     // console.log(strTime.day + " " + strTime.hour);
     // console.log(timeZone, strTime.hour);
 
@@ -670,6 +672,7 @@ export const updateDBTimeZones = async (req, res) => {
       );
     } else if (strTime.day === currentDay) {
       // add it to the users localstorage
+      // console.log(strTime.day + ": " + currentDay);
       console.log(
         chalk.yellow(
           `${timeZone} NEEDS FIRST WORDLE ${newWordle}: hour:${strTime.hour} day:${strTime.day}`
