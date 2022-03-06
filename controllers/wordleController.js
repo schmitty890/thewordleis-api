@@ -18,7 +18,7 @@ async function findOne() {
   console.log(month, day, year);
   try {
     CurrentWord.find(
-      { day: { $eq: 7 }, month: { $eq: month }, year: { $eq: year } },
+      { day: { $eq: day }, month: { $eq: month }, year: { $eq: year } },
       (err, latestWord) => {
         if (err) {
           res.send(err);
