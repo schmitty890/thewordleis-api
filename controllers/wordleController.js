@@ -654,6 +654,8 @@ export const updateDBTimeZones = async (req, res) => {
     "Africa/Johannesburg",
   ];
 
+  let dataArray = [];
+
   allTheTimeZones.forEach((timeZone) => {
     let currentDay;
     let strTime = luxon.DateTime.local().setZone(timeZone);
@@ -670,6 +672,7 @@ export const updateDBTimeZones = async (req, res) => {
           `${timeZone} NEEDS FIRST WORDLE ${newWordle} : hour:${strTime.hour} day:${strTime.day}`
         )
       );
+      dataArray.push({ timeZone: timeZone, word: newWordle });
     } else if (strTime.day === currentDay) {
       // add it to the users localstorage
       // console.log(strTime.day + ": " + currentDay);
@@ -678,6 +681,7 @@ export const updateDBTimeZones = async (req, res) => {
           `${timeZone} NEEDS FIRST WORDLE ${newWordle}: hour:${strTime.hour} day:${strTime.day}`
         )
       );
+      dataArray.push({ timeZone: timeZone, word: newWordle });
     } else {
       // add it to the users localstorage
       console.log(
@@ -685,10 +689,12 @@ export const updateDBTimeZones = async (req, res) => {
           `${timeZone} NEEDS SECOND WORDLE ${originalWordle}: hour:${strTime.hour} day:${strTime.day}`
         )
       );
+      dataArray.push({ timeZone: timeZone, word: originalWordle });
     }
   });
-  // res.send("Timezones have updated");
+
   console.log("Timezones have updated");
+  res.send(dataArray);
 };
 
 export const wordleCronJob = async (req, res) => {

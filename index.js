@@ -3,10 +3,14 @@ import bodyParser from "body-parser";
 import wordleRoutes from "./routes/wordleRoutes";
 import mongoose from "mongoose";
 import http from "http";
+import cors from "cors";
 
 const PORT = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
 
 const app = express();
+
+// enable cors
+app.use(cors());
 
 // body parser setup
 app.use(bodyParser.urlencoded({ extended: true }));
