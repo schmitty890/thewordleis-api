@@ -52,7 +52,7 @@ export const getTheWordle = async (req, res) => {
     args: ["--no-sandbox"],
   });
   const page = await browser.newPage();
-  await page.emulateTimezone("Pacific/Tarawa"); // the furthest east time zone I found
+  await page.emulateTimezone("Pacific/Kiritimati"); // the furthest east time zone I found
 
   await page.goto("https://www.nytimes.com/games/wordle/index.html");
   await page.waitForTimeout(3000);
@@ -690,15 +690,17 @@ export const updateDBTimeZones = async (req, res) => {
 
 export const wordleCronJob = async (req, res) => {
   console.log(
-    "tarawa time: " + luxon.DateTime.local().setZone("Pacific/Tarawa").hour
+    "Kiritimati time: " +
+      luxon.DateTime.local().setZone("Pacific/Kiritimati").hour
   );
   console.log("hawaii time: " + luxon.DateTime.local().hour); // TODO: this is different in heroku. it is getting a different time. need to specify hawaii. if it even matters
   // cronjob that runs ever hour on the hour
   cron.schedule("0 * * * *", () => {
     console.log("starting cron job...");
-    const firstTimeZone = luxon.DateTime.local().setZone("Pacific/Tarawa").hour;
+    const firstTimeZone =
+      luxon.DateTime.local().setZone("Pacific/Kiritimati").hour;
 
-    if (firstTimeZone === 0) {
+    if (firstTimeZone === 1) {
       console.log("calling getWordleWord()...");
       getTheWordle(); // sets the variable 'newWordle'
     } else {
