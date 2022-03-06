@@ -12,34 +12,21 @@ let originalDay = 0;
 let newWordle = "";
 
 async function findOne() {
+  const day = luxon.DateTime.local().setZone().day;
+  const month = luxon.DateTime.local().setZone().month;
+  const year = luxon.DateTime.local().setZone().year;
+  console.log(month, day, year);
   try {
-    CurrentWord.find({}, (err, latestWord) => {
-      if (err) {
-        res.send(err);
+    CurrentWord.find(
+      { day: { $eq: 7 }, month: { $eq: month }, year: { $eq: year } },
+      (err, latestWord) => {
+        if (err) {
+          res.send(err);
+        }
+        console.log(latestWord[0].word);
+        return latestWord[0].word;
       }
-
-      console.log(latestWord);
-      if (latestWord.length !== 0) {
-        console.log("original wordle: " + latestWord[1].word);
-        originalWordle = latestWord[1].word;
-        originalDay = latestWord[1].day;
-      }
-    })
-      .sort({ $natural: -1 })
-      .limit(2); // set to last known value in database (maybe hawaii word?)
-
-    CurrentWord.find({}, (err, latestWord) => {
-      if (err) {
-        res.send(err);
-      }
-      console.log(latestWord);
-      if (latestWord.length !== 0) {
-        console.log("new wordle: " + latestWord[0].word);
-        newWordle = latestWord[0].word;
-      }
-    })
-      .sort({ $natural: -1 })
-      .limit(1); // set to last known value in database (maybe hawaii word?)
+    );
   } catch (err) {
     console.log(err);
   } finally {
@@ -280,11 +267,15 @@ export const getTheWordle = async (req, res) => {
 
         // updateDBTimeZones(newWordle);
         // mongo here
-        const firstTimeDay = luxon.DateTime.local().setZone("Pacific/Apia").day;
+        const day = luxon.DateTime.local().setZone("Pacific/Apia").day;
+        const month = luxon.DateTime.local().setZone("Pacific/Apia").month;
+        const year = luxon.DateTime.local().setZone("Pacific/Apia").year;
 
         const newCurrentWord = new CurrentWord({
           word: newWordle,
-          day: firstTimeDay,
+          day: day,
+          month: month,
+          year: year,
         });
         console.log(newCurrentWord);
         // console.log("saving if users can edit");
@@ -729,6 +720,29 @@ export const updateDBTimeZones = async (req, res) => {
 
   console.log("Timezones have updated");
   res.send(dataArray);
+};
+
+export const getWordByDate = async (req, res) => {
+  const day = luxon.DateTime.local().setZone().day;
+  const month = luxon.DateTime.local().setZone().month;
+  const year = luxon.DateTime.local().setZone().year;
+  console.log(month, day, year);
+  try {
+    CurrentWord.find(
+      { month: { $eq: month }, day: { $eq: 6 }, year: { $eq: year } },
+      (err, latestWord) => {
+        if (err) {
+          res.send(err);
+        }
+        console.log(latestWord[0].word);
+        res.send(latestWord[0].word);
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  } finally {
+    // client.close();
+  }
 };
 
 export const wordleCronJob = async (req, res) => {

@@ -3,6 +3,7 @@ import {
   getTheWordle,
   updateDBTimeZones,
   wordleCronJob,
+  getWordByDate,
 } from "../controllers/wordleController";
 // console.log(test);
 // determine port server is running on
@@ -22,6 +23,8 @@ const routes = (app) => {
   app.route("/api/v1/updatedbtimezones").get(updateDBTimeZones);
 
   app.route("/api/v1/wordlecronjob").get(wordleCronJob);
+
+  app.route("/api/v1/getWordByDate").get(getWordByDate);
 };
 
 export default routes;

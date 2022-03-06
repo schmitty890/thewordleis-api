@@ -9,6 +9,12 @@ export const WordSchema = new Schema({
   day: {
     type: Number,
   },
+  month: {
+    type: Number,
+  },
+  year: {
+    type: Number,
+  },
 });
 
 WordSchema.set("timestamps", true);
