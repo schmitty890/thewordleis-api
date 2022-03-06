@@ -8,7 +8,7 @@ export const getTheWordle = async (req, res) => {
   console.log("getTheWordle");
 
   const browser = await puppeteer.launch({
-    headless: true,
+    executablePath: "/usr/bin/chromium-browser",
   });
   const page = await browser.newPage();
   await page.emulateTimezone("Pacific/Tarawa"); // the furthest east time zone I found
