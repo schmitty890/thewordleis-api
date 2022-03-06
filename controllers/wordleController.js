@@ -2,7 +2,7 @@ import puppeteer from "puppeteer";
 import luxon from "luxon";
 import cron from "node-cron";
 
-let newWordle = "house";
+let newWordle = "house"; // set to last known value in database (maybe hawaii word?)
 
 export const getTheWordle = async (req, res) => {
   console.log("getTheWordle");
@@ -232,13 +232,15 @@ export const getTheWordle = async (req, res) => {
         console.log(answer._remoteObject.value);
         console.log(answer._remoteObject.value.length);
         newWordle = answer._remoteObject.value;
+
+        updateDBTimeZones(newWordle);
+        res.send("New wordle obtained: " + newWordle);
       }
     }
   }
 
   await browser.close();
   // updateDBTimeZones(newWordle);
-  updateDBTimeZones(newWordle);
 };
 
 export const updateDBTimeZones = async (req, res) => {
@@ -605,6 +607,7 @@ export const updateDBTimeZones = async (req, res) => {
       console.log(`${timeZone} needs to be updated with ${newWordle}`);
     }
   });
+  res.send("Timezones have updated");
 };
 
 export const wordleCronJob = async (req, res) => {
@@ -625,8 +628,10 @@ export const wordleCronJob = async (req, res) => {
       updateDBTimeZones(newWordle); // passes the new word to the timezones needed to be updated
     }
   });
+  res.send("Cron job has started");
 };
 
 export const test = async (req, res) => {
   console.log("ayo our test here");
+  res.send("ayo our test here");
 };
