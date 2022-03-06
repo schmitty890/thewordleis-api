@@ -18,6 +18,7 @@ export const getTheWordle = async (req, res) => {
       "--no-zygote",
       "--single-process",
     ],
+    ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
   await page.emulateTimezone("Pacific/Tarawa"); // the furthest east time zone I found
