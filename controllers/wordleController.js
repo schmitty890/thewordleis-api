@@ -729,7 +729,7 @@ export const getWordByDate = async (req, res) => {
   console.log(month, day, year);
   try {
     CurrentWord.find(
-      { month: { $eq: month }, day: { $eq: 6 }, year: { $eq: year } },
+      { month: { $eq: month }, day: { $eq: day }, year: { $eq: year } },
       (err, latestWord) => {
         if (err) {
           res.send(err);
