@@ -748,26 +748,28 @@ export const getWordByDate = async (req, res) => {
 };
 
 export const wordleCronJob = async (req, res) => {
-  console.log(
-    "Pacific/Apia time: " + luxon.DateTime.local().setZone("Pacific/Apia").hour
-  );
-  console.log("hawaii time: " + luxon.DateTime.local().hour); // TODO: this is different in heroku. it is getting a different time. need to specify hawaii. if it even matters
+  // console.log(
+  //   "Pacific/Apia time: " + luxon.DateTime.local().setZone("Pacific/Apia").hour
+  // );
+  // console.log("hawaii time: " + luxon.DateTime.local().hour); // TODO: this is different in heroku. it is getting a different time. need to specify hawaii. if it even matters
   // cronjob that runs ever hour on the hour
-  cron.schedule("0 * * * *", () => {
-    console.log("starting cron job...");
-    const firstTimeZone = luxon.DateTime.local().setZone("Pacific/Apia").hour;
+  cron.schedule(
+    "0 * * * *",
+    () => {
+      console.log("starting cron job...");
 
-    if (firstTimeZone === 1) {
-      console.log("calling getWordleWord()...");
       getTheWordle(); // sets the variable 'newWordle'
-    } else {
-      console.log("calling updateDBTimeZones()...");
-      updateDBTimeZones(newWordle); // passes the new word to the timezones needed to be updated
+    },
+    {
+      scheduled: true,
+      timezone: "Pacific/Apia",
     }
-  });
+  );
+
   // res.send("Cron job has started");
   console.log("Cron job has started");
 };
+wordleCronJob();
 
 export const test = async (req, res) => {
   console.log("ayo our test here");
