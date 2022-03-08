@@ -723,10 +723,12 @@ export const updateDBTimeZones = async (req, res) => {
 };
 
 export const getWordByDate = async (req, res) => {
-  const day = luxon.DateTime.local().setZone().day;
-  const month = luxon.DateTime.local().setZone().month;
-  const year = luxon.DateTime.local().setZone().year;
+  console.log(req.query);
+  const day = req.query.day;
+  const month = req.query.month;
+  const year = req.query.year;
   console.log(month, day, year);
+  // need USERS month day year here from client side
   try {
     CurrentWord.find(
       { month: { $eq: month }, day: { $eq: day }, year: { $eq: year } },
