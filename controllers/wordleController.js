@@ -23,14 +23,8 @@ async function findOne() {
         if (err) {
           res.send(err);
         }
-        // console.log(latestWord[0].word || "boobs");
-        let word = "";
-        if (latestWord == undefined) {
-          word = "boobs";
-        } else {
-          word = latestWord[0].word;
-        }
-        return word;
+        console.log(latestWord[0].word);
+        return latestWord[0].word;
       }
     );
   } catch (err) {
