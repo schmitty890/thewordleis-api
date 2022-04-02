@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 
 setInterval(function () {
   http.get("http://thewordleis-api.herokuapp.com/api/v1/test");
-}, 300000); // every 5 minutes (300000)
+}, 500000); // every 5 minutes (300000)
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
