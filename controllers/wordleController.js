@@ -25,7 +25,7 @@ async function findOne() {
         }
         // console.log(latestWord[0].word || "boobs");
         let word = "";
-        if (latestWord[0].word == undefined) {
+        if (latestWord == undefined) {
           word = "boobs";
         } else {
           word = latestWord[0].word;
